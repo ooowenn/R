@@ -3,26 +3,49 @@ title: "R_rancimat"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
 ```
 
-## R Markdown
+```{r}
+Ranciamt_data <- read.csv(file = '/Users/ooowen/Desktop/Lab_Data/Rancimat_Data_2021.csv')
+Ranciamt_data
+remove_NA <- Ranciamt_data [!(Ranciamt_data$Induction.Time..h.=="N/A"),] ## remove all the N/A
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+```{r}
+remove_NA$Induction.Time..h. <- as.numeric(remove_NA$Induction.Time..h.) 
+filtered.Induction.T <- na.omit(remove_NA)
+filtered.Induction.T
 
-You can also embed plots, for example:
+Ave_induction_time <- mean(filtered.Induction.T$Induction.Time..h.) 
+Ave_induction_time
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```
+```{r}
+median_induction_time <- median(filtered.Induction.T$Induction.Time..h.)
+median_induction_time
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+sd_induction_time <- sd(filtered.Induction.T$Induction.Time..h., na.rm = TRUE)
+sd_induction_time
+```
+```{r}
+y <- dnorm(filtered.Induction.T$Induction.Time..h., mean = Ave_induction_time, sd = sd_induction_time)
+
+plot(filtered.Induction.T$Induction.Time..h., y )
+```
+
+```{r}
+t.test(filtered.Induction.T$Induction.Time..h., mu = 5)
+
+```
+```{r}
+greater.than.mean <- filter(filtered.Induction.T, Induction.Time..h. >=  Ave_induction_time)
+greater.than.mean <- as.data.frame(greater.than.mean)
+```
+
+
